@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Markdown editor</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <style>
+    html, body {
+      height: 100%;
+    };
+  </style>
+</head>
+
+<body>
+  <div id="app" class="container h-100">
+    <div class="row h-100">
+      <textarea autofocus class="col-sm" :value="input" @input="update"></textarea>
+      <div id="markdown" class="col-sm bg-light" v-html="compiledMarkdown">
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/marked"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        input: '# hello'
+      },
+      computed: {
+        compiledMarkdown() {
+          return marked(this.input);
+        }
+      },
+      methods: {
+        update(e) {
+          const run = _.debounce(() => {
+            /*console.log('---');
+            console.log(this.input);*/
+            this.input = e.target.value;
+          }, 300);
+          run();
+        },
+      },
+    });
+  </script>
+
+</body>
+
+</html>

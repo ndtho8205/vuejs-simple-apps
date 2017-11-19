@@ -1,0 +1,101 @@
+<!--
+1. Add a color property to each note that allows you to sort notes according to color.
+
+2. Add a priority number to each note, that allows you to rank the priority of notes.
+
+3. Use package for cookies in order to keep a history of notes through browser cookies. This way, if a user refreshes the app, they will find notes that they previously stored.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>NoteMaster</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div id="app">
+            <h3 class="text-center">{{ title }}</h3>
+
+            <form @submit.prevent="addNote">
+                <div class="form-group">
+                    <label for="inputTitle">Note Title</label>
+                    <input class="form-control" id="inputTitle" placeholder="Enter title" v-model="note.title"/>
+                </div>
+                <div class="form-group">
+                    <label for="inputText">Note Text</label>
+                    <textarea class="form-control" id="inputText" placeholder="Enter text" rows=3 v-model="note.text"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+            <div class="row mt-4">
+                <div class="col-sm-4" v-for="(note, index) in notes" key="index">
+                    <div class="card border-dark mb-3">
+                        <button class="close position-absolute" @click="removeNote(index)" style="top:0; right: 10px;">&times;</button>
+                        <div class="card-body">
+                            <h4 class="card-title">{{ note.title }}</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ note.date }}</h6>
+                            <p class="card-text">{{ note.text }}</p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <script>
+        let app = new Vue({
+            el: '#app',
+            data: {
+                title: 'NoteMaster',
+                note: {
+                    title: '',
+                    text: ''
+                },
+                notes: [],
+            },
+            created() {
+                this.restore();
+            },
+            watch: {
+                notes: function(val) {
+                    console.log(`[watch] notes = ${JSON.stringify(val)}`);
+                }
+            },
+            methods: {
+                addNote() {
+                    this.notes.push({
+                        ...this.note,
+                        date: new Date(Date.now()).toLocaleString(),
+                    });
+                    this.backup();
+                },
+                removeNote(index) {
+                    this.notes.splice(index, 1);
+                    this.backup();
+                },
+                backup() {
+                    window.localStorage.setItem("notes", JSON.stringify(this.notes));
+                },
+                restore() {
+                    notes = JSON.parse(window.localStorage.getItem("notes"));
+                    this.notes = notes || [];
+                },
+            }
+        })
+    </script>
+</body>
+</html>
